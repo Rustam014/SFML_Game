@@ -10,8 +10,6 @@
 
 
 int cout_pixel_x=0, cout_pixel_y=0;
-//extern Event *event;//ошибка
-
 
 void print_blok(int x, int y, vector < vector <char> > &pole)
 {
@@ -73,7 +71,7 @@ void game_over(bool t, RenderWindow &window)
     //window.clear(Color::Black);
 }
 
-bool StartMenu(int s, RenderWindow &window) //в меню будут "игра", "выход", "уровень сложности"
+bool StartMenu(int s, RenderWindow &window) 
 {
 	Texture texture, texture_tank;
     texture.loadFromFile("images/game_menu2.jpg");
@@ -148,9 +146,7 @@ void func(vector < vector <char> > &pole, RenderWindow &window)
 
 int main()
 {
-    //  Documents/программирование/semestral1
-    // g++ -Wall test.cpp -o test -lncurses && ./test
-    int count_tanks=3, count_dead=0;        //x, y - координаты игрока. storona - куда повернут игрок. count_dead - сколько убил ботов
+    int count_tanks=3, count_dead=0;                                //x, y - координаты игрока. storona - куда повернут игрок. count_dead - сколько убил ботов
     bool igra=true;                                                 //пока идет игра
     pair<int, int> kletka={0, 0}, kletka2={0, 0};
     RenderWindow window(VideoMode(203*coef, 107*coef), "SFML Works!");
@@ -158,9 +154,6 @@ int main()
     Vector2u size = window.getSize();
     cout_pixel_x = size.x; //1848
     cout_pixel_y = size.y; //1016
-
-    //Event event1;
-    //event=&event1;
 
     while (window.isOpen())
     { 
@@ -173,7 +166,7 @@ int main()
             return 0;
         }
         window.clear(Color::Black);
-        vector < vector <char> > pole(width+1, vector <char> (length+1) ); //поле с картой и ботами
+        vector < vector <char> > pole(width+1, vector <char> (length+1) ); 
         vector <shared_ptr<Object>> objects;
         print_map(pole);
         Player p(Up, 100, 5, 20, true, pole, window);
@@ -207,10 +200,10 @@ int main()
             kletka2=p.NextStep(pole, p.current_x, p.current_y);
             if(kletka2.first==-1 && kletka2.second==-1) { igra=false; window.close(); break;}
             func(pole, window);
-            for (auto it = objects.begin(); it != objects.end(); it++)//говорим что проходимся от начала до конца
+            for (auto it = objects.begin(); it != objects.end(); it++)
 		    {
 
-                if(abs(kletka2.first - (*it)->current_x)<2 && abs(kletka2.second - (*it)->current_y)<2) { (*it)->alive=false; (*it)->del_tank((*it)->current_x, (*it)->current_y, pole); count_dead++;}
+                if(abs((*it)->current_x - kletka2.first)<2 && abs((*it)->current_y - kletka2.second)<2) { (*it)->alive=false; (*it)->del_tank((*it)->current_x, (*it)->current_y, pole); count_dead++;}
                 kletka=(*it)->NextStep(pole, p.current_x, p.current_y);
                 if(abs(p.current_x - kletka.first)<2 && abs(p.current_y - kletka.second)<2 ) { igra=false; msleep(100000); break; }
                 if(count_dead==count_tanks) igra=false;
@@ -218,17 +211,17 @@ int main()
             window.display();
         }
         game_over(count_dead==count_tanks, window);
-        for (auto it = objects.begin(); it != objects.end(); it++)//говорим что проходимся от начала до конца
+        for (auto it = objects.begin(); it != objects.end(); it++)
 		{
             (*it)->alive=false;
             (*it)->NextStep(pole, 0, 0);
         }
         count_dead=0;
         count_tanks=3;
+        level=1;
         objects.clear();
         pole.clear();
         igra=true;
-        //window.clear();
     }
     
     return 0;
